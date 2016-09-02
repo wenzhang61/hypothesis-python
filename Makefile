@@ -69,11 +69,11 @@ format: $(PYFORMAT) $(ISORT)
 	$(TOOL_PYTHON) scripts/enforce_header.py
 	# isort will sort packages differently depending on whether they're installed
 	$(ISORT_VIRTUALENV)/bin/python -m pip install django pytz pytest fake-factory numpy flaky
-	find src tests hypothesislegacysupport examples -name '*.py' | xargs  env -i \
+	find src tests examples -name '*.py' | xargs  env -i \
             PATH="$(PATH)" $(ISORT) -p hypothesis -ls -m 2 -w 75 \
 			-a  "from __future__ import absolute_import, print_function, division" \
-			-rc src tests examples hypothesislegacysupport/src
-	find src tests hypothesislegacysupport examples -name '*.py' | xargs $(PYFORMAT) -i
+			-rc src tests examples /src
+	find src tests examples -name '*.py' | xargs $(PYFORMAT) -i
 
 lint: $(FLAKE8)
 	$(FLAKE8) src tests --exclude=compat.py,test_reflection.py,test_imports.py,tests/py2 --ignore=E731,E721
