@@ -42,14 +42,13 @@ except ImportError:  # pragma: no cover
 PY2 = sys.version_info[0] == 2
 PY3 = sys.version_info[0] == 3
 PYPY = platform.python_implementation() == 'PyPy'
-PY26 =
 NO_ARGSPEC = sys.version_info[:2] >= (3, 5)
 HAS_SIGNATURE = sys.version_info[:2] >= (3, 3)
 CAN_UNPACK_BYTE_ARRAY = sys.version_info[:3] >= (2, 7, 4)
 
 WINDOWS = platform.system() == 'Windows'
 
-if sys.version_info[:2] <= (2, 6)
+if sys.version_info[:2] <= (2, 6):
     raise ImportError(
         'Hypothesis is not supported on Python versions before 2.7'
     )
