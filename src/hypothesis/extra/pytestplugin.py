@@ -24,7 +24,7 @@ import pytest
 from hypothesis.reporting import default as default_reporter
 from hypothesis.reporting import with_reporter
 from hypothesis.statistics import collector
-from hypothesis.internal.compat import OrderedDict
+from hypothesis.internal.compat import OrderedDict, text_type
 
 PYTEST_VERSION = tuple(map(
     int,
@@ -44,7 +44,7 @@ if PYTEST_VERSION >= (2, 7, 0):
         def __call__(self, msg):
             if self.config.getoption('capture', 'fd') == 'no':
                 default_reporter(msg)
-            if not isinstance(msg, str):
+            if not isinstance(msg, text_type):
                 msg = repr(msg)
             self.results.append(msg)
 
