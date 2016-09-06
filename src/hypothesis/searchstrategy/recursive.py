@@ -19,6 +19,8 @@ from __future__ import division, print_function, absolute_import
 
 from contextlib import contextmanager
 
+from hypothesis.errors import InvalidArgument
+from hypothesis.internal.reflection import get_pretty_function_description
 from hypothesis.searchstrategy.wrappers import WrapperStrategy
 from hypothesis.searchstrategy.strategies import OneOfStrategy, \
     SearchStrategy
@@ -66,14 +68,37 @@ class RecursiveStrategy(SearchStrategy):
                 extend(OneOfStrategy(tuple(strategies), bias=0.8)))
         self.strategy = OneOfStrategy(strategies)
 
+    def __repr__(self):
+        if not hasattr(self, '_cached_repr'):
+            self._cached_repr = 'recursive(%r, %s, max_leaves=%d)' % (
+                self.base.wrapped_strategy, get_pretty_function_description(
+                    self.extend), self.max_leaves
+            )
+        return self._cached_repr
+
     def validate(self):
+        if not isinstance(self.base, SearchStrategy):
+            raise InvalidArgument(
+                'Expected base to be SearchStrategy but got %r' % (
+                    typ_string, self.base,))
+        extended = self.extend(self.base)
+        if not isinstance(extended, SearchStrategy):
+            raise InvalidArgument(
+                'Expected extend(%r) to be a SearchStrategy but got %r' % (
+                    self.base, extended
+                ))
         self.base.validate()
         self.extend(self.base).validate()
 
     def do_draw(self, data):
+        count = 0
         while True:
             try:
                 with self.base.capped(self.max_leaves):
                     return data.draw(self.strategy)
             except LimitReached:
-                pass
+                if count == 0:
+                    data.note_event((
+                        'Draw for %r exceeded max_leaves '
+                        'and had to be retried') % (self,))
+                count += 1

@@ -291,14 +291,20 @@ class FilteredStrategy(SearchStrategy):
         self.filtered_strategy.validate()
 
     def do_draw(self, data):
-        for _ in hrange(3):
+        for i in hrange(3):
             start_index = data.index
             value = data.draw(self.filtered_strategy)
             if self.condition(value):
                 return value
             else:
+                if i == 0:
+                    data.note_event(
+                        'Retried draw from %r to satisfy filter' % (self,))
                 # This is to guard against the case where we consume no data.
                 # As long as we consume data, we'll eventually pass or raise.
                 # But if we don't this could be an infinite loop.
                 assume(data.index > start_index)
+        data.note_event('Aborted test because unable to satisfy %r' % (
+            self,
+        ))
         data.mark_invalid()

@@ -582,6 +582,7 @@ def find(specifier, condition, settings=None, random=None, database_key=None):
             'Expected SearchStrategy but got %r of type %s' % (
                 specifier, type(specifier).__name__
             ))
+    specifier.validate()
 
     search = specifier
 
