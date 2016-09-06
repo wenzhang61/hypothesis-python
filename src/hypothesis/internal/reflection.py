@@ -237,7 +237,8 @@ def _extract_lambda_source(f):
     if args.keywords is not None:
         arg_bits.append(u'**' + args.keywords)
     return u'lambda %s: %s' % (
-        u', '.join(arg_bits),  source)
+        u', '.join(arg_bits), source
+    )
 
 
 def get_pretty_function_description(f):

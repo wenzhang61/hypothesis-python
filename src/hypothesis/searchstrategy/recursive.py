@@ -79,8 +79,8 @@ class RecursiveStrategy(SearchStrategy):
     def validate(self):
         if not isinstance(self.base, SearchStrategy):
             raise InvalidArgument(
-                'Expected base to be SearchStrategy but got %r' % (
-                    typ_string, self.base,))
+                'Expected base to be SearchStrategy but got %r' % (self.base,)
+            )
         extended = self.extend(self.base)
         if not isinstance(extended, SearchStrategy):
             raise InvalidArgument(
