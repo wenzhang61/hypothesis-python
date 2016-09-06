@@ -224,8 +224,6 @@ def _extract_lambda_source(f):
         out=out, is_pypy=PYPY, compile_mode='eval'
     )
     source = out.getvalue()
-    if PY2:
-        source = source.decode('utf-8')
     if source.startswith('return '):
         source = source[len('return '):]
     else:
@@ -233,11 +231,11 @@ def _extract_lambda_source(f):
     args = getargspec(f)
     arg_bits = list(args.args)
     if args.varargs is not None:
-        arg_bits.append(u'*' + args.varargs)
+        arg_bits.append('*' + args.varargs)
     if args.keywords is not None:
-        arg_bits.append(u'**' + args.keywords)
-    return u'lambda %s: %s' % (
-        u', '.join(arg_bits), source
+        arg_bits.append('**' + args.keywords)
+    return 'lambda %s: %s' % (
+        ', '.join(arg_bits), source
     )
 
 

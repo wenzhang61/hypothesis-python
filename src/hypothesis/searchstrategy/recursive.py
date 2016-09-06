@@ -70,7 +70,7 @@ class RecursiveStrategy(SearchStrategy):
 
     def __repr__(self):
         if not hasattr(self, '_cached_repr'):
-            self._cached_repr = 'recursive(%r, %s, max_leaves=%d)' % (
+            self._cached_repr = u'recursive(%r, %s, max_leaves=%d)' % (
                 self.base.wrapped_strategy, get_pretty_function_description(
                     self.extend), self.max_leaves
             )
