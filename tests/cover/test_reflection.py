@@ -623,3 +623,18 @@ def varargs(*args, **kwargs):
 
 def test_kwargs_appear_in_arg_string():
     assert 'x=1' in arg_string(varargs, (), {'x': 1})
+
+
+def turn_into_constant(x):
+    def accept(f):
+        return lambda: x
+    return accept
+
+
+@turn_into_constant(lambda x: x % 4 == 0)
+def foo(i):
+    pass
+
+
+def test_can_extract_lambdas_in_decorators():
+    assert get_pretty_function_description(foo()) == 'lambda x: x % 4 == 0'
