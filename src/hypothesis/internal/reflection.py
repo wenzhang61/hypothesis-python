@@ -221,12 +221,15 @@ def _extract_lambda_source(f):
     deparse_code(
         sys.version_info[0] + sys.version_info[1] * 0.1,
         f.__code__,
-        out=out, is_pypy=PYPY
+        out=out, is_pypy=PYPY, compile_mode='eval'
     )
     source = out.getvalue()
     if PY2:
         source = source.decode('utf-8')
-    assert source.startswith('return ')
+    if source.startswith('return '):
+        source = source[len('return '):]
+    else:
+        source = '<unknown>'
     args = getargspec(f)
     arg_bits = list(args.args)
     if args.varargs is not None:
@@ -234,8 +237,7 @@ def _extract_lambda_source(f):
     if args.keywords is not None:
         arg_bits.append(u'**' + args.keywords)
     return u'lambda %s: %s' % (
-        u', '.join(arg_bits), source[len('return '):]
-    )
+        u', '.join(arg_bits),  source)
 
 
 def get_pretty_function_description(f):
