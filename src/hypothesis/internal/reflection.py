@@ -229,7 +229,13 @@ def _extract_lambda_source(f):
     else:
         source = '<unknown>'
     args = getargspec(f)
-    arg_bits = list(args.args)
+    arg_bits = []
+    for a in args.args:
+        if isinstance(a, str):
+            arg_bits.append(a)
+        else:  # pragma: no cover
+            assert isinstance(a, list)
+            arg_bits.append('(%s)' % (', '.join(a)))
     if args.varargs is not None:
         arg_bits.append('*' + args.varargs)
     if args.keywords is not None:
