@@ -23,6 +23,7 @@ from hypothesis.errors import NoExamples, NoSuchExample, Unsatisfiable, \
 from hypothesis.control import assume, reject
 from hypothesis.internal.compat import hrange
 from hypothesis.internal.reflection import get_pretty_function_description
+from hypothesis.internal.deferredformat import deferredformat
 
 
 def one_of_strategies(xs):
@@ -298,8 +299,8 @@ class FilteredStrategy(SearchStrategy):
                 return value
             else:
                 if i == 0:
-                    data.note_event(
-                        'Retried draw from %r to satisfy filter' % (self,))
+                    data.note_event(deferredformat(
+                        'Retried draw from %r to satisfy filter', self,))
                 # This is to guard against the case where we consume no data.
                 # As long as we consume data, we'll eventually pass or raise.
                 # But if we don't this could be an infinite loop.

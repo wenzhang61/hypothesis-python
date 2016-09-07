@@ -21,6 +21,7 @@ from contextlib import contextmanager
 
 from hypothesis.errors import InvalidArgument
 from hypothesis.internal.reflection import get_pretty_function_description
+from hypothesis.internal.deferredformat import deferredformat
 from hypothesis.searchstrategy.wrappers import WrapperStrategy
 from hypothesis.searchstrategy.strategies import OneOfStrategy, \
     SearchStrategy
@@ -59,10 +60,11 @@ class RecursiveStrategy(SearchStrategy):
 
     def __init__(self, base, extend, max_leaves):
         self.max_leaves = max_leaves
-        self.base = LimitedStrategy(base)
+        self.base = base
+        self.limited_base = LimitedStrategy(base)
         self.extend = extend
 
-        strategies = [self.base, self.extend(self.base)]
+        strategies = [self.limited_base, self.extend(self.limited_base)]
         while 2 ** len(strategies) <= max_leaves:
             strategies.append(
                 extend(OneOfStrategy(tuple(strategies), bias=0.8)))
@@ -70,9 +72,9 @@ class RecursiveStrategy(SearchStrategy):
 
     def __repr__(self):
         if not hasattr(self, '_cached_repr'):
-            self._cached_repr = u'recursive(%r, %s, max_leaves=%d)' % (
-                self.base.wrapped_strategy, get_pretty_function_description(
-                    self.extend), self.max_leaves
+            self._cached_repr = 'recursive(%r, %s, max_leaves=%d)' % (
+                self.base, get_pretty_function_description(self.extend),
+                self.max_leaves
             )
         return self._cached_repr
 
@@ -81,24 +83,24 @@ class RecursiveStrategy(SearchStrategy):
             raise InvalidArgument(
                 'Expected base to be SearchStrategy but got %r' % (self.base,)
             )
-        extended = self.extend(self.base)
+        extended = self.extend(self.limited_base)
         if not isinstance(extended, SearchStrategy):
             raise InvalidArgument(
                 'Expected extend(%r) to be a SearchStrategy but got %r' % (
-                    self.base, extended
+                    self.limited_base, extended
                 ))
-        self.base.validate()
-        self.extend(self.base).validate()
+        self.limited_base.validate()
+        self.extend(self.limited_base).validate()
 
     def do_draw(self, data):
         count = 0
         while True:
             try:
-                with self.base.capped(self.max_leaves):
+                with self.limited_base.capped(self.max_leaves):
                     return data.draw(self.strategy)
             except LimitReached:
                 if count == 0:
-                    data.note_event((
+                    data.note_event(deferredformat(
                         'Draw for %r exceeded max_leaves '
-                        'and had to be retried') % (self,))
+                        'and had to be retried', self,))
                 count += 1
