@@ -804,7 +804,7 @@ def fractions(min_value=None, max_value=None, max_denominator=None):
 @cacheable
 @defines_strategy
 def decimals(
-    min_value=None, max_value=None, allow_nan=True, allow_infinity=True
+    min_value=None, max_value=None, allow_nan=None, allow_infinity=None
 ):
     """Generates instances of decimals.Decimal.
 
@@ -822,6 +822,15 @@ def decimals(
     check_valid_bound(min_value, 'min_value')
     check_valid_bound(max_value, 'max_value')
     check_valid_interval(min_value, max_value, 'min_value', 'max_value')
+
+    # The `allow_nan` and `allow_infinity` flags were added to the `decimals()`
+    # strategy after `min_value` and `max_value`.  To preserve backward-
+    # compatibility, if these flags are defaulted then we select an appropriate
+    # value based on the other flags supplied to this strategy.
+    if allow_nan is None:
+        allow_nan = (min_value is None) and (max_value is None)
+    if allow_infinity is None:
+        allow_infinity = (min_value is None) or (max_value is None)
 
     if allow_nan and (min_value is not None or max_value is not None):
         raise InvalidArgument(

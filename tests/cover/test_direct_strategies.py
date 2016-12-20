@@ -107,6 +107,11 @@ def test_validates_keyword_arguments(fn, kwargs):
     (ds.decimals, {'min_value': 1.0, 'max_value': 1.5}),
     (ds.decimals, {'min_value': decimal.Decimal('1.5')}),
     (ds.decimals, {'min_value': fractions.Fraction(1, 3)}),
+    (ds.decimals, {
+        'max_value': 1.0, 'min_value': -1.0, 'allow_infinity': False}),
+    (ds.decimals, {'min_value': 1.0, 'allow_nan': False}),
+    (ds.decimals, {'max_value': 1.0, 'allow_nan': False}),
+    (ds.decimals, {'max_value': 1.0, 'min_value': -1.0, 'allow_nan': False}),
     (ds.fractions, {
         'min_value': -1, 'max_value': 1, 'max_denominator': 1000}),
     (ds.fractions, {'min_value': 1.0}),
@@ -129,6 +134,11 @@ def test_validates_keyword_arguments(fn, kwargs):
     (ds.floats, {'min_value': 1.0}),
     (ds.floats, {'max_value': 1.0}),
     (ds.floats, {'max_value': 1.0, 'min_value': -1.0}),
+    (ds.floats, {
+        'max_value': 1.0, 'min_value': -1.0, 'allow_infinity': False}),
+    (ds.floats, {'min_value': 1.0, 'allow_nan': False}),
+    (ds.floats, {'max_value': 1.0, 'allow_nan': False}),
+    (ds.floats, {'max_value': 1.0, 'min_value': -1.0, 'allow_nan': False}),
     (ds.sampled_from, {'elements': [1]}),
     (ds.sampled_from, {'elements': [1, 2, 3]}),
     (ds.fixed_dictionaries, {'mapping': {1: ds.integers()}}),
