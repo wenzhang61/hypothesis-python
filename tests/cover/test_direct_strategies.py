@@ -62,7 +62,8 @@ def fn_ktest(*fnkwargs):
     (ds.decimals, {'max_value': 0.0, 'min_value': 1.0}),
     (ds.decimals, {'min_value': 0.0, 'allow_nan': True}),
     (ds.decimals, {'max_value': 0.0, 'allow_nan': True}),
-    (ds.decimals, {'min_value': 0.0, 'max_value': 1.0, 'allow_infinity': True}),
+    (ds.decimals, {
+        'min_value': 0.0, 'max_value': 1.0, 'allow_infinity': True}),
     (ds.fractions, {'min_value': float('nan')}),
     (ds.fractions, {'min_value': 2, 'max_value': 1}),
     (ds.fractions, {'max_denominator': 0}),
